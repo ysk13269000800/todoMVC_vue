@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Template • TodoMVC</title>
+	<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+	<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+	<!-- CSS overrides - remove if you don't need it -->
+	<link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+	<section class="todoapp" id="todoapp">
+		<header class="header">
+			<h1>todos</h1>
+			<!-- 
+				@keydown="addTodo"麻烦，还需要判断keycode
+				@keyup.13="addTodo"
+				@keyup.enter="addTodo"   推荐使用方法
+			-->
+			<input class="new-todo" placeholder="需要做的事?" @keyup.enter="addTodo">
+		</header>
+		<!-- 默认情况下，此部分应隐藏，并在存在todos时显示。 -->
+		<template v-if="todos.length">
+			<section class="main" v-if="todos.length">
+				<input id="toggle-all" class="toggle-all" type="checkbox" @click="toggleAll">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					<!-- 这些内容只是为了显示列表项的结构。 -->
+					<!-- 列表项在编辑时应获取类`editing‘，在标记为已完成时应获取`compled’ -->
+					<!-- v-bind:class="{类名：布尔值}" 当布尔值为true作用这个类名 -->
+					<li :class="{completed:item.completed,editing:currentEditing === item}" v-for="(item,index) in todos">
+						<!-- 循环todos中的数据 -->
+						<div class="view">
+							<input class="toggle" type="checkbox" v-model="item.completed">
+							<label @dblclick="handleGetEditingDblclick(item)">{{item.title}}</label>
+							<button class="destroy" @click="removeTodo(index, $event)"></button>
+						</div>
+						<input class="edit" :value="item.title" @keydown.enter="handleSaveEditKeydown(item, index ,$event)" @blur="handleSaveEditKeydown(item, index, $event)"
+						 @keydown.esc="handleCancelEditEsc">
+					</li>
+				</ul>
+			</section>
+			<!-- 默认情况下，此页脚应隐藏并在存在todos时显示 -->
+			<footer class="footer" v-if="todos.length">
+				<!-- 当todos.length为0时，隐藏footer -->
+				<!-- This should be `0 items left` by default -->
+				<span class="todo-count"><strong>{{todos.length}}</strong>项</span>
+				<!-- 如果未实施路由，请将其删除 -->
+				<!-- <ul class="filters">
+					<li>
+						<a class="selected" href="#/">All</a>
+					</li>
+					<li>
+						<a href="#/active">Active</a>
+					</li>
+					<li>
+						<a href="#/completed">Completed</a>
+					</li>
+				</ul> -->
+				<!-- 如果没有已完成的项目，则隐藏 ↓ -->
+				<button class="clear-completed" v-if="todos.some(item => item.completed)" @click="handleClearAllDoneClick">清空已完成任务</button>
+			</footer>
+		</template>
+	</section>
+	<footer class="info">
+		<p>双击以编辑待办事项</p>
+		<!-- 用你的名字和网址改变这一点 ↓ -->
+		<p>Created by <a href="http://todomvc.com">you</a></p>
+		<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+	</footer>
+	<script src="node_modules/todomvc-common/base.js"></script>
+	<script src="node_modules/vue/dist/vue.js"></script>
+	<script src="js/app.js"></script>
+</body>
+
+</html>
